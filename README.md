@@ -1,4 +1,3 @@
-sorting_algorithms
-==================
+#C++ Sorting Algorithm implementation
 
-C++ Sorting Algorithm implementation
+A collection of Sorting Algorithm implemented in C++11. See the `develop` branch for latest version.
