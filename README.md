@@ -5,3 +5,4 @@ A collection of Sorting Algorithm implemented in C++11. See the `develop` branch
 ###Insertion Sort
 ###Merge Sort
 ###Heap Sort
+##Quick Sort
