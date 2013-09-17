@@ -30,6 +30,9 @@
     <ClInclude Include="quicksort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bubble_sort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sorting.cpp">

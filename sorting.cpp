@@ -2,6 +2,7 @@
 #include "merge_sort.h"
 #include "heap_sort.h"
 #include "quicksort.h"
+#include "bubble_sort.h"
 
 #include <algorithm>    // is_sorted
 #include <functional>   // greater
@@ -67,6 +68,11 @@ void test_sorts(C container, Pred pred=Pred())
     test_sort(cdmh::quicksort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
     test_sort(cdmh::quicksort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
     test_sort(cdmh::quicksort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+
+    std::cout << "Bubble Sort " << container.size() << " elements \n";
+    test_sort(cdmh::bubble_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
+    test_sort(cdmh::bubble_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
+    test_sort(cdmh::bubble_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
 }
 
 template<typename C>

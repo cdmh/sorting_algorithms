@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bubble_sort.h" />
     <ClInclude Include="heap_sort.h" />
     <ClInclude Include="insertion_sort.h" />
     <ClInclude Include="merge_sort.h" />
