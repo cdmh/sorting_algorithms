@@ -1,5 +1,7 @@
 #include "insertion_sort.h"
 #include "merge_sort.h"
+#include "heap_sort.h"
+
 #include <algorithm>    // is_sorted
 #include <functional>   // greater
 #include <vector>
@@ -64,4 +66,12 @@ int main()
     test_sorts(std::vector<int>{ 10, 20, 30, 40, 510, 20, 50, 60, 10, 60, 130, 10, 20, 30, 40, 50, 60, 140, 10, 20, 30, 40, 50, 60, 1});
     test_sorts(std::list<int>{ 10, 20, 30, 40, 510, 20, 30, 10, 20, 30, 40, 60, 140, 50, 60, 10, 60, 110, 20, 30, 40, 50, 60, 1});
     test_sorts(std::deque<int>{ 10, 20, 30, 40, 30, 10, 40, 5, 10, 60, 520, 30, 40, 50, 60, 110, 20, 10, 60, 110, 20, 30, 40, 50, 60});
+
+    test_sort(
+        heap_sort<std::vector<std::string>, std::less<std::string>, true>,
+        std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"},
+        std::less<std::string>());
+
+    std::vector<int> v{ 10, 20, 30, 40, 510, 20, 50, 60, 10, 60, 130, 10, 20, 30, 40, 50, 60, 140, 10, 20, 30, 40, 50, 60, 1};
+    std::sort(v.begin(), v.end());
 }
