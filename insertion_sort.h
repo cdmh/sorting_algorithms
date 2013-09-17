@@ -1,5 +1,7 @@
 ﻿#include "sort.h"
 
+namespace cdmh {
+
 template<typename It, typename Pred>
 void insertion_sort(It begin, It end, Pred pred)
 {
@@ -30,3 +32,5 @@ void insertion_sort(C &container, Pred pred)
 {
     insertion_sort(begin(container), end(container), pred);
 }
+
+}   // namespace cdmh

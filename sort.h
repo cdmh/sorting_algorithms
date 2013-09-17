@@ -3,6 +3,8 @@
 #include <list>
 #include <deque>
 #include <vector>
+
+namespace cdmh {
 namespace detail {
 
 template <typename Container>
@@ -13,3 +15,4 @@ template <typename... Ts> struct is_container<std::deque<Ts...> > : std::true_ty
 template <typename... Ts> struct is_container<std::vector<Ts...> > : std::true_type { };
 
 }   // namespace detail
+}   // namespace cdmh

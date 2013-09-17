@@ -1,5 +1,7 @@
 ﻿#include "sort.h"
 
+namespace cdmh {
+
 template<typename It, typename Pred>
 void heap_sort(It begin, It end, Pred pred)
 {
@@ -14,3 +16,4 @@ void heap_sort(C &container, Pred pred)
     heap_sort(begin(container), end(container), pred);
 }
 
+}   // namespace cdmh

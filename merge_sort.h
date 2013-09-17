@@ -1,6 +1,8 @@
 ﻿#include "sort.h"
 #include <cassert>
 
+namespace cdmh {
+
 // inplace merge sort
 template<typename It, typename Pred>
 void merge_sort(It begin, It end, Pred pred)
@@ -55,3 +57,5 @@ void merge_sort(C1 const &container, C2 &result, Pred pred)
     static_assert(isContainer, "'container' and 'result' must be containers");
     merge_sort(begin(container), end(container), std::back_inserter(result), pred);
 }
+
+}   // namespace cdmh

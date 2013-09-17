@@ -43,13 +43,13 @@ void test_sorts(C container, Pred pred=Pred())
     // we have to specify all the template parameters because otherwise there
     // are name conflicts without the function parameters being specified. In
     // normal usage, the template parameters are deduced automatically;
-    //     insertion_sort(container, pred);
-    //     insertion_sort(container.begin(), container.end(), std::greater<typename C::value_type>());
-    //     merge_sort(container, pred);
-    //     merge_sort(container.begin(), container.end(), std::greater<typename C::value_type>());
-    test_sort(insertion_sort<C, Pred, true>, container, pred);
-    test_sort(merge_sort<C, Pred, true>, container, pred);
-    test_sort2(merge_sort<C, C, Pred, true>, container, pred);
+    //     cdmh::insertion_sort(container, pred);
+    //     cdmh::insertion_sort(container.begin(), container.end(), std::greater<typename C::value_type>());
+    //     cdmh::merge_sort(container, pred);
+    //     ... etc
+    test_sort(cdmh::insertion_sort<C, Pred, true>, container, pred);
+    test_sort(cdmh::merge_sort<C, Pred, true>, container, pred);
+    test_sort2(cdmh::merge_sort<C, C, Pred, true>, container, pred);
 }
 
 int main()
@@ -68,7 +68,7 @@ int main()
     test_sorts(std::deque<int>{ 10, 20, 30, 40, 30, 10, 40, 5, 10, 60, 520, 30, 40, 50, 60, 110, 20, 10, 60, 110, 20, 30, 40, 50, 60});
 
     test_sort(
-        heap_sort<std::vector<std::string>, std::less<std::string>, true>,
+        cdmh::heap_sort<std::vector<std::string>, std::less<std::string>, true>,
         std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"},
         std::less<std::string>());
 
