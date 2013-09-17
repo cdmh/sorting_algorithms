@@ -2,6 +2,13 @@
 
 namespace cdmh {
 
+// Heap Sort
+//     Worst case performance       O(n log n)
+//     Best case performance        Omega(n), O(n log n)
+//     Average case performance	    O(n log n)
+//     Worst case space complexity  O(n) total, O(1) auxiliary
+// http://en.wikipedia.org/wiki/Heapsort
+
 template<typename It, typename Pred>
 void heap_sort(It begin, It end, Pred pred)
 {

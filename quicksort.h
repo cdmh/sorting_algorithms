@@ -2,14 +2,14 @@
 
 namespace cdmh {
 
-namespace detail {
+// Quick Sort
+//     Worst case performance       O(n2) (extremely rare)
+//     Best case performance        O(n log n)
+//     Average case performance     O(n log n)
+//     Worst case space complexity  O(n) auxiliary (naive) O(log n) auxiliary (Sedgewick 1978)
+// http://en.wikipedia.org/wiki/Quicksort
 
-template <typename It, typename Distance>
-It advance(It it, Distance n)
-{
-    std::advance(it, n);
-    return it;
-}
+namespace detail {
 
 template<typename T>
 T median(T const &t1, T const &t2, T const &t3)

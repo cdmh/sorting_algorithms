@@ -2,6 +2,13 @@
 
 namespace cdmh {
 
+// Insertion Sort
+//    Worst case performance            О(n2) comparisons, swaps
+//    Best case performance             O(n) comparisons, O(1) swaps
+//    Average case performance          О(n2) comparisons, swaps
+//    Worst case space complexity       О(n) total, O(1)
+// http://en.wikipedia.org/wiki/Insertion_sort
+
 template<typename It, typename Pred>
 void insertion_sort(It begin, It end, Pred pred)
 {

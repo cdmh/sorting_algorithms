@@ -3,6 +3,13 @@
 
 namespace cdmh {
 
+// Merge Sort
+//  Worst case performance      O(n log n)
+//  Best case performance       O(n log n) typical, O(n) natural variant
+//  Average case performance    O(n log n)
+//  Worst case space complexity O(n) auxiliary
+// http://en.wikipedia.org/wiki/Mergesort
+
 // inplace merge sort
 template<typename It, typename Pred>
 void merge_sort(It begin, It end, Pred pred)
