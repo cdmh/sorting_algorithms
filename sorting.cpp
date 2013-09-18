@@ -24,6 +24,7 @@
 #include "heap_sort.h"
 #include "quicksort.h"
 #include "bubble_sort.h"
+#include "introsort.h"
 
 #include <algorithm>    // is_sorted
 #include <functional>   // greater
@@ -123,6 +124,11 @@ void test_sorts(C container, Pred pred=Pred())
     run_container_inplace_sort(cdmh::bubble_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
     run_container_inplace_sort(cdmh::bubble_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
     run_container_inplace_sort(cdmh::bubble_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+
+    std::cout << "Introsort " << container.size() << " elements \n";
+    run_container_inplace_sort(cdmh::introsort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
+    run_container_inplace_sort(cdmh::introsort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
+    run_container_inplace_sort(cdmh::introsort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
 }
 
 template<typename C>
