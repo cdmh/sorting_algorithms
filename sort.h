@@ -24,6 +24,7 @@
 #include <list>
 #include <deque>
 #include <vector>
+#include <functional>           // std::less
 
 namespace cdmh {
 namespace detail {

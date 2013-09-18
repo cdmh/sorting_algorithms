@@ -86,13 +86,13 @@ void test_sorts(C container, Pred pred=Pred())
     // std::sort requires random access iterators, so list & deque are not supported
     std::cout << "std::sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        run_iterator_sort(container.begin(), container.end(), std::sort<std::vector<typename C::value_type>::iterator, decltype(pred)>, pred);
+        run_iterator_sort(container.begin(), container.end(), std::sort<typename std::vector<typename C::value_type>::iterator, decltype(pred)>, pred);
     }(std::vector<typename C::value_type>(container.begin(), container.end()));
 
     // std::stable_sort requires random access iterators, so list & deque are not supported
     std::cout << "std::stable_sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        run_iterator_sort(container.begin(), container.end(), std::stable_sort<std::vector<typename C::value_type>::iterator, decltype(pred)>, pred);
+        run_iterator_sort(container.begin(), container.end(), std::stable_sort<typename std::vector<typename C::value_type>::iterator, decltype(pred)>, pred);
     }(std::vector<typename C::value_type>(container.begin(), container.end()));
 
     // the heap sort currently uses std::make_heap and std::sort_heap which both require

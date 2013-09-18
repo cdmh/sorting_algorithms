@@ -48,7 +48,7 @@ std::pair<It,It> quicksort_splits(It begin, It end, Pred pred)
 //     Worst case space complexity  O(n) auxiliary (naive) O(log n) auxiliary (Sedgewick 1978)
 // http://en.wikipedia.org/wiki/Quicksort
 
-template<typename It, typename Pred=std::less>
+template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
 void quicksort(It begin, It end, Pred pred)
 {
     if (std::distance(begin, end) > 1)
@@ -59,7 +59,7 @@ void quicksort(It begin, It end, Pred pred)
     }
 }
 
-template<typename C, typename Pred=std::less, bool isContainer=detail::is_container<C>::value>
+template<typename C, typename Pred=std::less<typename C::value_type>, bool isContainer=detail::is_container<C>::value>
 void quicksort(C &container, Pred pred)
 {
     quicksort(container.begin(), container.end(), pred);

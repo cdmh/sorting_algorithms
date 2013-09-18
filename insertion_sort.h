@@ -55,7 +55,7 @@ void insertion_sort(It begin, It end, Pred pred)
     }
 }
 
-template<typename C, typename Pred=std::less, bool=detail::is_container<C>::value>
+template<typename C, typename Pred=std::less<typename C::value_type>, bool=detail::is_container<C>::value>
 void insertion_sort(C &container, Pred pred)
 {
     insertion_sort(begin(container), end(container), pred);

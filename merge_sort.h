@@ -21,6 +21,7 @@
 
 #include "sort.h"
 #include <cassert>
+#include <algorithm>        // inplace_merge
 
 namespace cdmh {
 
@@ -48,7 +49,7 @@ void merge_sort(It begin, It end, Pred pred)
 }
 
 // inplace merge sort
-template<typename C, typename Pred=std::less, bool isContainer=detail::is_container<C>::value>
+template<typename C, typename Pred=std::less<typename C::value_type>, bool isContainer=detail::is_container<C>::value>
 void merge_sort(C &container, Pred pred)
 {
     static_assert(isContainer, "'container' must be a container");
@@ -78,7 +79,7 @@ void merge_sort(It begin, It end, Out result, Pred pred)
 }
 
 // merge sort to secondary container
-template<typename C1, typename C2, typename Pred=std::less, bool isContainer=detail::is_container<C1>::value && detail::is_container<C2>::value>
+template<typename C1, typename C2, typename Pred=std::less<typename C1::value_type>, bool isContainer=detail::is_container<C1>::value && detail::is_container<C2>::value, typename=std::enable_if<std::is_same<typename C1::value_type, typename C2::value_type>::value>>
 void merge_sort(C1 const &container, C2 &result, Pred pred)
 {
     assert(result.empty());
