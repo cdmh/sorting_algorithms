@@ -3,7 +3,6 @@
 A collection of Sorting Algorithm implemented in C++11. See the `develop` branch for latest version.
 
 
-
 ##Insertion Sort
 |http://en.wikipedia.org/wiki/Insertion_sort|stable|
 |----|---|
@@ -11,6 +10,12 @@ A collection of Sorting Algorithm implemented in C++11. See the `develop` branch
 |Best case performance               |O(n) comparisons, O(1) swaps|
 |Average case performance            |O(n2) comparisons, swaps|
 |Worst case space complexity         |O(n) total, O(1)|
+
+##Introsort
+|http://en.wikipedia.org/wiki/Introsort|unstable|
+|----|---|
+|Worst case performance              |O(n log n)|
+|Average case performance            |O(n log n)|
 
 ###Merge Sort
 |http://en.wikipedia.org/wiki/Mergesort|stable|
