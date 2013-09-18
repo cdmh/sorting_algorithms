@@ -12,6 +12,8 @@ A collection of Sorting Algorithm implemented in C++11. See the `develop` branch
 |Worst case space complexity         |O(n) total, O(1)|
 
 ##Introsort
+Introsort is a hybrid sorting algorithm that uses Quick Sort to a recursion depth of O(log n) and then switches to a Heap Sort. Heap Sort is implemented using the standard C++ functions `make_heap` and `sort_heap`, both of which require Random Access data iterators. For maximum flexibility, this implementation of Introsort does not switch to Heap Sort if the data iterators are not Random Access, and can therefore operator on container with any iterator category.
+
 |http://en.wikipedia.org/wiki/Introsort|unstable|
 |----|---|
 |Worst case performance              |O(n log n)|
