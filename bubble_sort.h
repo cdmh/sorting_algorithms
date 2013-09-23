@@ -24,10 +24,10 @@
 namespace cdmh {
 
 // Bubble Sort
-//     Worst case performance   O(n^2)
-//     Best case performance    O(n)
-//     Average case performance O(n^2)
-//     Space                    inplace
+//     Worst case performance       O(n^2)
+//     Best case performance        O(n)
+//     Average case performance     O(n^2)
+//     Wost case space complexity   O(1)
 // http://en.wikipedia.org/wiki/Bubble_sort
 
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
@@ -36,11 +36,12 @@ void bubble_sort(It begin, It end, Pred pred)
     if (std::distance(begin, end) <= 1)
         return;
     
+    auto ite      = end;
     bool finished = false;
-    auto ite = detail::advance(end, -1);
     while (!finished)
     {
         finished = true;
+        std::advance(ite, -1);
         for (auto it=begin; it!=ite; ++it)
         {
             auto next = detail::advance(it, 1);
@@ -49,7 +50,6 @@ void bubble_sort(It begin, It end, Pred pred)
                 std::swap(*it, *next);
                 finished = false;
             }
-            detail::advance(ite, -1);
         }
     }
 }
