@@ -36,6 +36,9 @@
     <ClInclude Include="introsort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cocktail_sort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sorting.cpp">

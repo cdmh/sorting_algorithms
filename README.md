@@ -50,4 +50,12 @@ Introsort is a hybrid sorting algorithm that uses Quick Sort to a recursion dept
 |Worst case performance              |O(n^2)
 |Best case performance               |O(n)
 |Average case performance            |O(n^2)
-|Space                               |inplace
+|Space                               |O(1)
+
+###Cocktail Sort
+|http://en.wikipedia.org/wiki/Cocktail_sort|stable|
+|----|---
+|Worst case performance              |O(n^2)
+|Best case performance               |O(n)
+|Average case performance            |O(n^2)
+|Space                               |O(1)
