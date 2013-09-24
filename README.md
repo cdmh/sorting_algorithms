@@ -65,6 +65,7 @@ Introsort is a hybrid sorting algorithm that uses Quick Sort to a recursion dept
 ###Min Max Sort
 An adapted Selection Sort that finds and repositions the Min and Max elements on each pass.
 
+||stable|
 |----|---
 |Worst case performance              |O(n^2)
 |Best case performance               |O(n)
