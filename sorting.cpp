@@ -26,6 +26,8 @@
 #include "bubble_sort.h"
 #include "cocktail_sort.h"
 #include "introsort.h"
+#include "selection_sort.h"
+#include "minmax_sort.h"
 
 #include <algorithm>    // is_sorted
 #include <functional>   // greater
@@ -135,6 +137,16 @@ void test_sorts(C container, Pred pred=Pred())
     run_container_inplace_sort(cdmh::introsort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
     run_container_inplace_sort(cdmh::introsort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
     run_container_inplace_sort(cdmh::introsort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+
+    std::cout << "Selection sort " << container.size() << " elements \n";
+    run_container_inplace_sort(cdmh::selection_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
+    run_container_inplace_sort(cdmh::selection_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
+    run_container_inplace_sort(cdmh::selection_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+
+    std::cout << "MinMax sort " << container.size() << " elements \n";
+    run_container_inplace_sort(cdmh::minmax_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
+    run_container_inplace_sort(cdmh::minmax_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
+    run_container_inplace_sort(cdmh::minmax_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
 }
 
 template<typename C>
@@ -149,12 +161,13 @@ void test_all_sorts(C container)
 
 int main()
 {
+    test_all_sorts(std::vector<int>{ 1, 2, 3, 4, 51, 2, 5, 6, 1, 6, 13, 1, 2, 3, 4, 5, 6, 14, 1, 2, 3, 4, 5, 6, 1 });
     test_all_sorts(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
     test_all_sorts(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
     test_all_sorts(std::vector<int>{});
     test_all_sorts(std::vector<int>{ 3 });
     test_all_sorts(std::vector<int>{ 3, 4, 5, 9, 8, 2, 1, 7, 6 });
-    test_all_sorts(std::vector<int>{ 60, 10, 410, 20, 40, 50, 60, 10, 40, 30, 40, 50, 60, 10, 40, 50, 6 });
+    test_all_sorts(std::vector<int>{ 60, 10, 410, 40, 50, 60, 10, 40, 30, 40, 50, 60, 10, 40, 50, 6 });
     test_all_sorts(std::vector<int>{ 10, 20, 30, 40, 510, 20, 50, 60, 10, 60, 130, 10, 20, 30, 40, 50, 60, 140, 10, 20, 30, 40, 50, 60, 1 });
 
     // shows stability of the sort by comparing doubles as ints

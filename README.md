@@ -4,6 +4,8 @@ A collection of Sorting Algorithm implemented in C++11. See the `develop` branch
 
 
 ##Insertion Sort
+An adapted Bubble Sort that alternates between forward and backward passes.
+
 |http://en.wikipedia.org/wiki/Insertion_sort|stable|
 |----|---|
 |Worst case performance              |O(n2) comparisons, swaps|
@@ -46,6 +48,23 @@ Introsort is a hybrid sorting algorithm that uses Quick Sort to a recursion dept
 
 ###Bubble Sort
 |http://en.wikipedia.org/wiki/Bubble_sort|stable|
+|----|---
+|Worst case performance              |O(n^2)
+|Best case performance               |O(n)
+|Average case performance            |O(n^2)
+|Space                               |O(1)
+
+###Selection Sort
+|http://en.wikipedia.org/wiki/Selection_sort|stable|
+|----|---
+|Worst case performance              |O(n^2)
+|Best case performance               |O(n)
+|Average case performance            |O(n^2)
+|Space                               |O(1)
+
+###Min Max Sort
+An adapted Selection Sort that finds and repositions the Min and Max elements on each pass.
+
 |----|---
 |Worst case performance              |O(n^2)
 |Best case performance               |O(n)

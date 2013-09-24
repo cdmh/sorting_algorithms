@@ -39,6 +39,12 @@
     <ClInclude Include="cocktail_sort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="minmax_sort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="selection_sort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sorting.cpp">

@@ -92,7 +92,9 @@
     <ClInclude Include="insertion_sort.h" />
     <ClInclude Include="introsort.h" />
     <ClInclude Include="merge_sort.h" />
+    <ClInclude Include="minmax_sort.h" />
     <ClInclude Include="quicksort.h" />
+    <ClInclude Include="selection_sort.h" />
     <ClInclude Include="sort.h" />
   </ItemGroup>
   <ItemGroup>
