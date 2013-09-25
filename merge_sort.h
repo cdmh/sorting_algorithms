@@ -17,7 +17,7 @@ namespace cdmh {
 
 // inplace merge sort
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void merge_sort(It begin, It end, Pred pred=Pred())
+inline void merge_sort(It begin, It end, Pred pred=Pred())
 {
     auto const size = std::distance(begin, end);
     if (size <= 1)
@@ -33,7 +33,7 @@ void merge_sort(It begin, It end, Pred pred=Pred())
 
 // merge sort to non-overlapping output iterator
 template<typename It, typename Out, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void merge_sort_copy(It begin, It end, Out result, Pred pred=Pred())
+inline void merge_sort_copy(It begin, It end, Out result, Pred pred=Pred())
 {
     auto const size = std::distance(begin, end);
     if (size == 0)

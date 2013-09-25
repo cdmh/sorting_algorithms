@@ -13,7 +13,7 @@ namespace cdmh {
 // http://en.wikipedia.org/wiki/Selection_sort
 
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void selection_sort(It begin, It end, Pred pred=Pred())
+inline void selection_sort(It begin, It end, Pred pred=Pred())
 {
     for (auto it=begin; it!= end; ++it)
         std::swap(*std::min_element(it, end, pred), *it);

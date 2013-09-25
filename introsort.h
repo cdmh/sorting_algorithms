@@ -13,7 +13,7 @@ namespace cdmh {
 // http://en.wikipedia.org/wiki/Introsort
 
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void introsort(It begin, It end, Pred pred=Pred())
+inline void introsort(It begin, It end, Pred pred=Pred())
 {
     if (std::distance(begin, end) > 1)
         detail::introsort(begin, end, pred, (size_t)floor(log(std::distance(begin,end)/log(2.0))));

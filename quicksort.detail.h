@@ -28,7 +28,7 @@ inline T median(T const &t1, T const &t2, T const &t3)
 }
 
 template<typename It, typename Pred>
-std::pair<It,It> quicksort_splits(It begin, It end, Pred pred)
+inline std::pair<It,It> quicksort_splits(It begin, It end, Pred pred)
 {
     using value_t = typename std::iterator_traits<It>::value_type;
     using namespace std::placeholders;

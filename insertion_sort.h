@@ -13,7 +13,7 @@ namespace cdmh {
 // http://en.wikipedia.org/wiki/Insertion_sort
 
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void insertion_sort(It begin, It end, Pred pred=Pred())
+inline void insertion_sort(It begin, It end, Pred pred=Pred())
 {
     if (begin == end)
         return;

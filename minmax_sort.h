@@ -8,7 +8,7 @@ namespace cdmh {
 // MinMax Sort
 
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void minmax_sort(It begin, It end, Pred pred=Pred())
+inline void minmax_sort(It begin, It end, Pred pred=Pred())
 {
     auto count = std::distance(begin, end);
     for (auto it=begin, ite=end; count > 1; ++it, count-=2)

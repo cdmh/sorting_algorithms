@@ -15,7 +15,7 @@ namespace cdmh {
 // http://en.wikipedia.org/wiki/Heapsort
 
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void heap_sort(It begin, It end, Pred pred=Pred())
+inline void heap_sort(It begin, It end, Pred pred=Pred())
 {
     std::make_heap(begin, end, pred);
     std::sort_heap(begin, end, pred);

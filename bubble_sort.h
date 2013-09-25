@@ -13,7 +13,7 @@ namespace cdmh {
 // http://en.wikipedia.org/wiki/Bubble_sort
 
 template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void bubble_sort(It begin, It end, Pred pred=Pred())
+inline void bubble_sort(It begin, It end, Pred pred=Pred())
 {
     if (std::distance(begin, end) <= 1)
         return;

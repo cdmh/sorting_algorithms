@@ -34,7 +34,7 @@ struct heap_sort_if_we_can<It, true>
 
 // detail introsort implementation takes a depth count
 template<typename It, typename Pred>
-void introsort(It begin, It end, Pred pred, size_t depth)
+inline void introsort(It begin, It end, Pred pred, size_t depth)
 {
     auto const size = std::distance(begin, end);
     if (size <= 1)
