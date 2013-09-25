@@ -45,7 +45,7 @@ void cocktail_sort(It begin, It end, Pred pred=Pred())
                  it!=ite; ++it)
             {
                 auto next = detail::advance(it, 1);
-                if (!pred(*next, *it))
+                if (pred(*it, *next))
                 {
                     std::swap(*it, *next);
                     finished = false;
