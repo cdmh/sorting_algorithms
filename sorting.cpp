@@ -22,11 +22,102 @@
 namespace cdmh {
 namespace test {
 
+namespace utils {
+
+template<typename C, typename Pred>
+C sorted(C container, Pred pred)
+{
+    std::vector<typename C::value_type> vector(container.begin(), container.end());
+    std::sort(vector.begin(), vector.end(), pred);
+    return C(vector.begin(), vector.end());
+}
+
+template<typename It>
+void dump(It it, It ite)
+{
+    for (; it!=ite; ++it)
+        std::clog << " " << *it;
+}
+
+template<typename C>
+bool const matching_containers(C const &container, C const &expected)
+{
+    bool   equal = true;
+    size_t loop;
+    auto it1 = container.begin();
+    auto it2 = expected.begin();
+    for (loop=0; equal  &&  loop<std::min(container.size(), expected.size()); ++loop, ++it1, ++it2)
+    {
+        if (*it1 != *it2)
+            equal = false;
+    }
+
+    if (!equal)
+    {
+        std::clog << "\n\nExpected:"; dump(expected.begin(), expected.end());
+        std::clog << "\nActual  :";   dump(container.begin(), container.end());
+    }
+    if (!equal)
+        std::clog << "\nERROR at offset " << loop-1;
+    if (container.size() != expected.size())
+        std::clog << "\nERROR: containers are different sizes!";
+    if (container != expected)
+        std::clog << "\n";
+    return (container == expected);
+}
+
+}   // namespace utils
+
+namespace drivers {
+
+template<typename Sort, typename It, typename Pred>
+void sort_between_iterators(It it, It ite, Sort sort, Pred pred)
+{
+    sort(it, ite, pred);
+    std::clog << "--> ";
+    utils::dump(it, ite);
+    std::clog << '\n';
+    assert(std::is_sorted(it, ite, pred));
+}
+
+template<typename Sort, typename C, typename Pred>
+void sort_container(Sort sort, C container, Pred pred)
+{
+    C expected(utils::sorted(container, pred));
+    sort(container.begin(), container.end(), pred);
+
+    std::clog << "--> ";
+    utils::dump(container.begin(), container.end());
+    std::clog << '\n';
+
+    assert(utils::matching_containers(container, expected));
+}
+
+template<typename Sort, typename C, typename Pred>
+void sort_container_copy(Sort sort, C container, Pred pred)
+{
+    C result;
+    C expected(utils::sorted(container, pred));
+    sort(container.begin(), container.end(), std::back_inserter(result), pred);
+
+    std::clog << "--> ";
+    utils::dump(result.begin(), result.end());
+    std::clog << '\n';
+
+    assert(utils::matching_containers(result, expected));
+}
+
+}   // namespace drivers
+
+namespace algorithms {
+
+using ::cdmh::test::drivers::sort_container;
+using ::cdmh::test::drivers::sort_container_copy;
 
 template<typename C, typename Pred>
 void bubble_sort(C container, Pred pred)
 {
-    std::cout << "Bubble Sort " << container.size() << " elements \n";
+    std::clog << "Bubble Sort " << container.size() << " elements \n";
     sort_container(
         cdmh::bubble_sort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -48,7 +139,7 @@ void bubble_sort(C container, Pred pred)
 template<typename C, typename Pred>
 void cocktail_sort(C container, Pred pred)
 {
-    std::cout << "Cocktail Sort " << container.size() << " elements \n";
+    std::clog << "Cocktail Sort " << container.size() << " elements \n";
     sort_container(
         cdmh::cocktail_sort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -72,7 +163,7 @@ void heap_sort(C container, Pred pred)
 {
     // the heap sort currently uses std::make_heap and std::sort_heap which both require
     // a random access iterator, so only vector is tested here
-    std::cout << "Heap Sort " << container.size() << " elements\n";
+    std::clog << "Heap Sort " << container.size() << " elements\n";
     sort_container(
         cdmh::heap_sort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -86,7 +177,7 @@ void heap_sort(C container, Pred pred)
 template<typename C, typename Pred>
 void insertion_sort(C container, Pred pred)
 {
-    std::cout << "Insertion Sort " << container.size() << " elements\n";
+    std::clog << "Insertion Sort " << container.size() << " elements\n";
     sort_container(
         cdmh::insertion_sort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -108,7 +199,7 @@ void insertion_sort(C container, Pred pred)
 template<typename C, typename Pred>
 void introsort_sort(C container, Pred pred)
 {
-    std::cout << "Introsort " << container.size() << " elements \n";
+    std::clog << "Introsort " << container.size() << " elements \n";
     sort_container(
         cdmh::introsort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -130,7 +221,7 @@ void introsort_sort(C container, Pred pred)
 template<typename C, typename Pred>
 void merge_sort_copy(C container, Pred pred)
 {
-    std::cout << "Merge Sort (copy)" << container.size() << " elements\n";
+    std::clog << "Merge Sort (copy)" << container.size() << " elements\n";
     sort_container_copy(
         cdmh::merge_sort_copy<
             std::vector<typename C::value_type>::iterator,
@@ -159,7 +250,7 @@ void merge_sort_copy(C container, Pred pred)
 template<typename C, typename Pred>
 void merge_sort(C container, Pred pred)
 {
-    std::cout << "Merge Sort (inplace)" << container.size() << " elements\n";
+    std::clog << "Merge Sort (inplace)" << container.size() << " elements\n";
     sort_container(
         cdmh::merge_sort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -181,7 +272,7 @@ void merge_sort(C container, Pred pred)
 template<typename C, typename Pred>
 void minmax_sort(C container, Pred pred)
 {
-    std::cout << "MinMax sort " << container.size() << " elements \n";
+    std::clog  << "MinMax sort " << container.size() << " elements \n";
     sort_container(
         cdmh::minmax_sort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -203,7 +294,7 @@ void minmax_sort(C container, Pred pred)
 template<typename C, typename Pred>
 void quicksort(C container, Pred pred)
 {
-    std::cout << "Quicksort " << container.size() << " elements \n";
+    std::clog << "Quicksort " << container.size() << " elements \n";
     sort_container(
         cdmh::quicksort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -225,7 +316,7 @@ void quicksort(C container, Pred pred)
 template<typename C, typename Pred>
 void selection_sort(C container, Pred pred)
 {
-    std::cout << "Selection sort " << container.size() << " elements \n";
+    std::clog << "Selection sort " << container.size() << " elements \n";
     sort_container(
         cdmh::selection_sort<std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
@@ -243,50 +334,15 @@ void selection_sort(C container, Pred pred)
     cdmh::selection_sort(container.begin(), container.end());
 }
 
-template<typename Sort, typename It, typename Pred>
-void sort_between_iterators(It it, It ite, Sort sort, Pred pred)
-{
-    sort(it, ite, pred);
-    std::cout << "--> ";
-    for (auto each=it; each!=ite; ++each)
-        std::cout << *each << " ";
-    std::cout << '\n';
-    assert(std::is_sorted(it, ite, pred));
-}
-
-template<typename Sort, typename C, typename Pred>
-void sort_container(Sort sort, C container, Pred pred)
-{
-    sort(container.begin(), container.end(), pred);
-    std::cout << "--> ";
-    for (auto each : container)
-        std::cout << each << " ";
-    std::cout << '\n';
-    assert(std::is_sorted(begin(container), end(container), pred));
-}
-
-template<typename Sort, typename C, typename Pred>
-void sort_container_copy(Sort sort, C container, Pred pred)
-{
-    C result;
-    sort(container.begin(), container.end(), std::back_inserter(result), pred);
-
-    std::cout << "--> ";
-    for (auto each : result)
-        std::cout << each << " ";
-    std::cout << '\n';
-
-    assert(result.size() == container.size());
-    assert(std::is_sorted(begin(result), end(result), pred));
-}
+}   // namespace algorithms
 
 template<typename C, typename Pred>
 void test_sorts(C container, Pred pred)
 {
     // std::sort requires random access iterators, so list & deque are not supported
-    std::cout << "std::sort " << container.size() << " elements\n";
+    std::clog << "std::sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        sort_between_iterators(
+        drivers::sort_between_iterators(
             container.begin(),
             container.end(),
             std::sort<
@@ -296,9 +352,9 @@ void test_sorts(C container, Pred pred)
     }(std::vector<typename C::value_type>(container.begin(), container.end()));
 
     // std::stable_sort requires random access iterators, so list & deque are not supported
-    std::cout << "std::stable_sort " << container.size() << " elements\n";
+    std::clog << "std::stable_sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        sort_between_iterators(
+        drivers::sort_between_iterators(
             container.begin(),
             container.end(),
             std::stable_sort<
@@ -307,16 +363,27 @@ void test_sorts(C container, Pred pred)
             pred);
     }(std::vector<typename C::value_type>(container.begin(), container.end()));
 
-    bubble_sort(container, pred);
-    cocktail_sort(container, pred);
-    heap_sort(container, pred);
-    insertion_sort(container, pred);
-    introsort_sort(container, pred);
-    merge_sort(container, pred);
-    merge_sort_copy(container, pred);
-    minmax_sort(container, pred);
-    quicksort(container, pred);
-    selection_sort(container, pred);
+    algorithms::bubble_sort(container, pred);
+    algorithms::cocktail_sort(container, pred);
+    algorithms::heap_sort(container, pred);
+    algorithms::insertion_sort(container, pred);
+    algorithms::introsort_sort(container, pred);
+    algorithms::merge_sort(container, pred);
+    algorithms::merge_sort_copy(container, pred);
+    algorithms::minmax_sort(container, pred);
+    algorithms::quicksort(container, pred);
+    algorithms::selection_sort(container, pred);
+}
+
+template<typename C, typename Pred>
+void test_stable_sorts(C container, Pred pred)
+{
+    std::clog << "Testing stability\n=================\n";
+    algorithms::bubble_sort(container, pred);
+    algorithms::cocktail_sort(container, pred);
+    algorithms::insertion_sort(container, pred);
+    algorithms::merge_sort(container, pred);
+    algorithms::merge_sort_copy(container, pred);
 }
 
 template<typename C>
@@ -334,7 +401,7 @@ void test_all_sorts(C container)
 
 int main()
 {
-    using cdmh::test::test_sorts;
+    using cdmh::test::test_stable_sorts;
     using cdmh::test::test_all_sorts;
 
     test_all_sorts(std::vector<int>{ 1, 2, 3, 4, 51, 2, 5, 6, 1, 6, 13, 1, 2, 3, 4, 5, 6, 14, 1, 2, 3, 4, 5, 6, 1 });
@@ -346,9 +413,8 @@ int main()
     test_all_sorts(std::vector<int>{ 60, 10, 410, 40, 50, 60, 10, 40, 30, 40, 50, 60, 10, 40, 50, 6 });
     test_all_sorts(std::vector<int>{ 10, 20, 30, 40, 510, 20, 50, 60, 10, 60, 130, 10, 20, 30, 40, 50, 60, 140, 10, 20, 30, 40, 50, 60, 1 });
 
-//!!!test stable sort
     // shows stability of the sort by comparing doubles as ints
-    test_sorts(
+    test_stable_sorts(
         std::vector<double>{ 1.2, 1.1, 0.4, 0.1, 0.9, 3.1, 3.6, 9.4, 9.8, 9.6, 3.2 },
         [](double const &first, double const &second) {
             return int(first)<int(second);
@@ -375,3 +441,4 @@ int main()
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+\
