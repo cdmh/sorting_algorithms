@@ -25,26 +25,6 @@ inline It advance(It it, Distance n)
     return it;
 }
 
-template<typename T>
-inline T median(T const &t1, T const &t2, T const &t3)
-{
-    if (t1 < t2)
-    {
-        if (t2 < t3)
-            return t2;
-        else if (t1 < t3)
-            return t3;
-        else
-            return t1;
-    }
-    else if (t1 < t3)
-        return t1;
-    else if (t2 < t3)
-        return t3;
-    else
-        return t2;
-}
-
 }   // namespace detail
 }   // namespace cdmh
 

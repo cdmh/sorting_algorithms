@@ -1,34 +1,45 @@
 ﻿// Copyright (c) 2013 Craig Henderson
 // https://github.com/cdmh/sorting_algorithms
 
-#include "sort.h"
-#include "quicksort.detail.h"
+#pragma once
 
 namespace cdmh {
 
-// Quick Sort
-//     Worst case performance       O(n2) (extremely rare)
-//     Best case performance        O(n log n)
-//     Average case performance     O(n log n)
-//     Worst case space complexity  O(n) auxiliary (naive) O(log n) auxiliary (Sedgewick 1978)
-// http://en.wikipedia.org/wiki/Quicksort
+namespace detail {
 
-template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
-void quicksort(It begin, It end, Pred pred)
+template<typename T>
+inline T median(T const &t1, T const &t2, T const &t3)
 {
-    if (std::distance(begin, end) > 1)
+    if (t1 < t2)
     {
-        auto splits = detail::quicksort_splits(begin, end, pred);
-        quicksort(begin, splits.first, pred);
-        quicksort(splits.second, end, pred);
+        if (t2 < t3)
+            return t2;
+        else if (t1 < t3)
+            return t3;
+        else
+            return t1;
     }
+    else if (t1 < t3)
+        return t1;
+    else if (t2 < t3)
+        return t3;
+    else
+        return t2;
 }
 
-template<typename C, typename Pred=std::less<typename C::value_type>, bool isContainer=detail::is_container<C>::value>
-void quicksort(C &container, Pred pred)
+template<typename It, typename Pred>
+std::pair<It,It> quicksort_splits(It begin, It end, Pred pred)
 {
-    quicksort(container.begin(), container.end(), pred);
+    using value_t = typename std::iterator_traits<It>::value_type;
+    using namespace std::placeholders;
+
+    auto const not_pred = [&pred](value_t const &first, value_t const &second) { return !pred(second, first); };
+    auto const pivot    = detail::median(*begin, *detail::advance(begin, std::distance(begin, end) / 2), *detail::advance(end, -1));
+    auto const split    = std::partition(begin, end, std::bind(pred, _1, pivot));
+    return std::make_pair(split, std::partition(split, end, std::bind(not_pred, _1, pivot)));
 }
+
+}   // namespace detail
 
 }   // namespace cdmh
 

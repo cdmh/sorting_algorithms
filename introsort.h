@@ -2,57 +2,10 @@
 // https://github.com/cdmh/sorting_algorithms
 
 #include "sort.h"
-#include "quicksort.h"
-#include "heap_sort.h"
+#include "introsort.detail.h"
 #include <cmath>    // floor, log
 
 namespace cdmh {
-
-namespace detail {
-
-// the heap sort uses std::make_heap and std::sort_heap, both of which only work with random access iterators.
-// this functor allows us to use heap_sort or not depending on the iterator type
-template<typename It, bool IsRandomIterator=std::is_same<typename std::iterator_traits<It>::iterator_category, std::random_access_iterator_tag>::value>
-struct heap_sort_if_we_can
-{
-    template<typename... Args>
-    bool operator()(Args...)
-    {
-        return false;
-    }
-};
-
-template<typename It>
-struct heap_sort_if_we_can<It, true>
-{
-    template<typename Pred>
-    bool operator()(It begin, It end, Pred pred)
-    {
-        heap_sort(begin, end, pred);
-        return true;
-    }
-};
-
-
-// detail introsort implementation takes a depth count
-template<typename It, typename Pred>
-void introsort(It begin, It end, Pred pred, size_t depth)
-{
-    auto const size = std::distance(begin, end);
-    if (size <= 1)
-        return;
-
-    // if we've reached the depth limit, then attempt a heap sort.
-    // if heap sort is not available to us, then continue with quicksort algorithm
-    if (--depth == 0  &&  heap_sort_if_we_can<It>()(begin, end, pred))
-        return;
-
-    auto splits = detail::quicksort_splits(begin, end, pred);
-    introsort(begin, splits.first, pred, depth);
-    introsort(splits.second, end, pred, depth);
-}
-
-}   // namespace detail
 
 // Introsort
 //     Worst case performance       O(n log n)

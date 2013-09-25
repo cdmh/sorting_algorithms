@@ -45,6 +45,12 @@
     <ClInclude Include="selection_sort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="introsort.detail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="quicksort.detail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sorting.cpp">

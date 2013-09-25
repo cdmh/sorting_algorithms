@@ -1,21 +1,18 @@
 // Copyright (c) 2013 Craig Henderson
 // https://github.com/cdmh/sorting_algorithms
 
-#include "insertion_sort.h"
-#include "merge_sort.h"
-#include "heap_sort.h"
-#include "quicksort.h"
 #include "bubble_sort.h"
 #include "cocktail_sort.h"
+#include "heap_sort.h"
+#include "insertion_sort.h"
 #include "introsort.h"
-#include "selection_sort.h"
+#include "merge_sort.h"
 #include "minmax_sort.h"
+#include "quicksort.h"
+#include "selection_sort.h"
 
 #include <algorithm>    // is_sorted
 #include <functional>   // greater
-#include <vector>
-#include <list>
-#include <deque>
 #include <cassert>
 #include <string>
 #include <iostream>
