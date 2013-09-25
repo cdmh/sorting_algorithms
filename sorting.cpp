@@ -18,6 +18,7 @@
 #include <list>
 #include <deque>
 #include <iostream>
+#include <chrono>
 
 namespace cdmh {
 namespace test {
@@ -68,7 +69,7 @@ bool const matching_containers(C const &container, C const &expected)
 
 }   // namespace utils
 
-namespace drivers {
+namespace wrappers {
 
 template<typename Sort, typename It, typename Pred>
 void sort_between_iterators(It it, It ite, Sort sort, Pred pred)
@@ -107,12 +108,12 @@ void sort_container_copy(Sort sort, C container, Pred pred)
     assert(utils::matching_containers(result, expected));
 }
 
-}   // namespace drivers
+}   // namespace wrappers
 
 namespace algorithms {
 
-using ::cdmh::test::drivers::sort_container;
-using ::cdmh::test::drivers::sort_container_copy;
+using ::cdmh::test::wrappers::sort_container;
+using ::cdmh::test::wrappers::sort_container_copy;
 
 template<typename C, typename Pred>
 void bubble_sort(C container, Pred pred)
@@ -221,7 +222,7 @@ void introsort_sort(C container, Pred pred)
 template<typename C, typename Pred>
 void merge_sort_copy(C container, Pred pred)
 {
-    std::clog << "Merge Sort (copy)" << container.size() << " elements\n";
+    std::clog << "Merge Sort (copy) " << container.size() << " elements\n";
     sort_container_copy(
         cdmh::merge_sort_copy<
             std::vector<typename C::value_type>::iterator,
@@ -336,13 +337,90 @@ void selection_sort(C container, Pred pred)
 
 }   // namespace algorithms
 
+namespace drivers {
+
+namespace detail {
+
+template<typename Fn>
+void shuffled_ints(int size, Fn fn)
+{
+    std::vector<int> container;
+    for(int loop=0; loop<size; ++loop)
+        container.push_back((loop+1) * 10);
+
+    std::random_shuffle(container.begin(), container.end());
+    fn(container);
+}
+
+template<typename Fn>
+void reversed_shuffled_ints(int size, Fn fn)
+{
+    std::vector<int> container;
+    for (int i = 0; i < size; ++i)
+        container.push_back((i+1) * 10);
+
+    std::clog << "Sorting reversed shuffled pattern of " << size << " integers ... ";
+    for (size_t n = 0; n < 100; ++n)
+    {
+        std::random_shuffle(container.begin(), container.end());
+        fn(container);
+    }
+}
+
+template<typename Fn>
+void sorted_ints(int size, Fn fn)
+{
+    std::vector<int> container;
+    for (int i = 0; i < size; ++i)
+        container.push_back((i+1) * 10);
+
+    std::clog << "Sorting " << size << " sorted integers ... ";
+    fn(container);
+}
+
+template<typename Fn>
+void reversed_sorted_ints(size_t size, Fn fn)
+{
+    std::vector<int> container;
+    for (size_t i = 0; i < size; ++i)
+        container.push_back((size - i) * 10);
+
+    std::clog << "Sorting " << size << " reverse-sorted integers ... ";
+    fn(container);
+}
+
+template<typename Fn>
+void partially_shuffled_ints(size_t size, Fn fn)
+{
+    std::vector<int> container;
+    for (size_t i = 0; i < size; ++i)
+        container.push_back((i+1) * 10);
+
+    // sorted-shuffled-sorted pattern
+    std::clog << "Sorting sorted-shuffled-sorted pattern of " << size << " integers ... ";
+    for (size_t n = 0; n < 100; ++n)
+    {
+        std::random_shuffle(container.begin() + (size/3 * 1), container.begin() + (size/3 * 2));
+        fn(container);
+    }
+
+    // shuffled-sorted-shuffled pattern
+    std::clog << "Sorting shuffled-sorted-shuffled pattern of " << size << " integers ... ";
+    for (int n = 0; n < 100; ++n)
+    {
+        std::random_shuffle(container.begin()               , container.begin() + (size/3 * 1));
+        std::random_shuffle(container.begin() + (size/3 * 2), container.end());
+        fn(container);
+    }
+}
+
 template<typename C, typename Pred>
 void test_sorts(C container, Pred pred)
 {
     // std::sort requires random access iterators, so list & deque are not supported
     std::clog << "std::sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        drivers::sort_between_iterators(
+        wrappers::sort_between_iterators(
             container.begin(),
             container.end(),
             std::sort<
@@ -354,7 +432,7 @@ void test_sorts(C container, Pred pred)
     // std::stable_sort requires random access iterators, so list & deque are not supported
     std::clog << "std::stable_sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        drivers::sort_between_iterators(
+        wrappers::sort_between_iterators(
             container.begin(),
             container.end(),
             std::stable_sort<
@@ -375,6 +453,8 @@ void test_sorts(C container, Pred pred)
     algorithms::selection_sort(container, pred);
 }
 
+}   // namespace detail
+
 template<typename C, typename Pred>
 void test_stable_sorts(C container, Pred pred)
 {
@@ -387,41 +467,110 @@ void test_stable_sorts(C container, Pred pred)
 }
 
 template<typename C>
-void test_all_sorts(C container)
+void test_ascending_descending(C container)
 {
     // test sort ascending
-    test_sorts(container, std::less<typename C::value_type>());
+    detail::test_sorts(container, std::less<typename C::value_type>());
 
     // test sort descending
-    test_sorts(container, std::greater<typename C::value_type>());
+    detail::test_sorts(container, std::greater<typename C::value_type>());
 }
+
+template<typename Fn>
+void sized_test(int const size, Fn fn)
+{
+    detail::shuffled_ints(size, fn);
+    detail::reversed_shuffled_ints(size, fn);
+    detail::sorted_ints(size, fn);
+    detail::reversed_sorted_ints(size, fn);
+    detail::partially_shuffled_ints(size, fn);
+}
+
+void run_exhaustive_tests(void)
+{
+    // run exhaustive tests on arrays of these sizes
+    std::vector<int> sizes { 0, 1, 5, 30, 31, 32, 33, 128, 1023, 1024 };
+    for (auto size : sizes)
+    {
+        sized_test(
+            size,
+            std::bind(
+                cdmh::test::algorithms::bubble_sort<
+                    std::vector<int>,
+                    std::less<int>>,
+                std::placeholders::_1,
+                std::less<int>()));
+
+        sized_test(
+            size,
+            std::bind(
+                cdmh::test::algorithms::bubble_sort<
+                    std::vector<int>,
+                    std::greater<int>>,
+                std::placeholders::_1,
+                std::greater<int>()));
+    }
+}
+
+}   // namespace drivers
 
 }   // namespace test
 }   // namespace cdmh
 
 int main()
 {
-    using cdmh::test::test_stable_sorts;
-    using cdmh::test::test_all_sorts;
+    using cdmh::test::drivers::run_exhaustive_tests;
+    using cdmh::test::drivers::test_stable_sorts;
+    using cdmh::test::drivers::test_ascending_descending;
 
-    test_all_sorts(std::vector<int>{ 1, 2, 3, 4, 51, 2, 5, 6, 1, 6, 13, 1, 2, 3, 4, 5, 6, 14, 1, 2, 3, 4, 5, 6, 1 });
-    test_all_sorts(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
-    test_all_sorts(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
-    test_all_sorts(std::vector<int>{});
-    test_all_sorts(std::vector<int>{ 3 });
-    test_all_sorts(std::vector<int>{ 3, 4, 5, 9, 8, 2, 1, 7, 6 });
-    test_all_sorts(std::vector<int>{ 60, 10, 410, 40, 50, 60, 10, 40, 30, 40, 50, 60, 10, 40, 50, 6 });
-    test_all_sorts(std::vector<int>{ 10, 20, 30, 40, 510, 20, 50, 60, 10, 60, 130, 10, 20, 30, 40, 50, 60, 140, 10, 20, 30, 40, 50, 60, 1 });
+    test_ascending_descending(std::vector<int>{ 1, 2, 3, 4, 51, 2, 5, 6, 1, 6, 13, 1, 2, 3, 4, 5, 6, 14, 1, 2, 3, 4, 5, 6, 1 });
+    test_ascending_descending(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
+    test_ascending_descending(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
+    test_ascending_descending(std::vector<int>{});
+    test_ascending_descending(std::vector<int>{ 3 });
+    test_ascending_descending(std::vector<int>{ 3, 4, 5, 9, 8, 2, 1, 7, 6 });
+    test_ascending_descending(std::vector<int>{ 60, 10, 410, 40, 50, 60, 10, 40, 30, 40, 50, 60, 10, 40, 50, 6 });
+    test_ascending_descending(std::vector<int>{ 10, 20, 30, 40, 510, 20, 50, 60, 10, 60, 130, 10, 20, 30, 40, 50, 60, 140, 10, 20, 30, 40, 50, 60, 1 });
 
-    // shows stability of the sort by comparing doubles as ints
+    // test stability of a sort algorithm by comparing doubles as ints
     test_stable_sorts(
         std::vector<double>{ 1.2, 1.1, 0.4, 0.1, 0.9, 3.1, 3.6, 9.4, 9.8, 9.6, 3.2 },
         [](double const &first, double const &second) {
             return int(first)<int(second);
         });
 
-    std::vector<int> v{ 10, 20, 30, 40, 510, 20, 50, 60, 10, 60, 130, 10, 20, 30, 40, 50, 60, 140, 10, 20, 30, 40, 50, 60, 1};
-    std::sort(v.begin(), v.end());
+    // text sorts with enough data to exceed limits in the hybrid sorts
+    test_ascending_descending(std::vector<char * const>{
+        "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "Praesent", "a", "posuere",
+        "lorem", "Nam", "porttitor", "viverra", "nisl", "ac", "adipiscing", "tortor", "ornare", "vel", "Fusce",
+        "velit", "justo", "laoreet", "sed", "massa", "et", "tincidunt", "elementum", "risus", "In", "placerat",
+        "auctor", "pellentesque", "Aliquam", "at", "tortor", "metus", "Donec", "sollicitudin", "in", "nunc", "eget",
+        "pretium", "In", "non", "dictum", "erat", "Mauris", "eget", "sem", "elit", "Duis", "malesuada", "nulla", "eu",
+        "ultrices", "gravida", "Etiam", "nec", "mattis", "leo", "Maecenas", "ornare", "diam", "sed", "nisl", "cursus",
+        "aliquam", "Aliquam", "erat", "volutpat", "Nullam", "commodo", "nulla", "ut", "enim", "iaculis", "convallis",
+        "Aenean", "id", "sagittis", "lorem", "Donec", "varius", "accumsan", "augue", "eget", "cursus", "Ut", "dui",
+        "nibh", "sodales", "quis", "porttitor", "at", "tristique", "ut", "tellus", "Donec", "vitae", "dapibus", "neque",
+        "Maecenas", "nec", "ultricies", "ante", "quis", "congue", "tellus", "Vivamus", "cursus", "nisl", "ac", "nibh",
+        "tempus", "eu", "iaculis", "nibh", "molestie", "Etiam", "tempus", "dolor", "nec", "consectetur", "tempor",
+        "orci", "purus", "malesuada", "augue", "ut", "pharetra", "leo", "metus", "sed", "urna", "In", "suscipit",
+        "placerat", "velit", "nec", "eleifend", "Maecenas", "quis", "condimentum", "mi", "nec", "blandit", "justo"});
+
+    test_ascending_descending(std::vector<std::string>{
+        "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "Praesent", "a", "posuere",
+        "lorem", "Nam", "porttitor", "viverra", "nisl", "ac", "adipiscing", "tortor", "ornare", "vel", "Fusce",
+        "velit", "justo", "laoreet", "sed", "massa", "et", "tincidunt", "elementum", "risus", "In", "placerat",
+        "auctor", "pellentesque", "Aliquam", "at", "tortor", "metus", "Donec", "sollicitudin", "in", "nunc", "eget",
+        "pretium", "In", "non", "dictum", "erat", "Mauris", "eget", "sem", "elit", "Duis", "malesuada", "nulla", "eu",
+        "ultrices", "gravida", "Etiam", "nec", "mattis", "leo", "Maecenas", "ornare", "diam", "sed", "nisl", "cursus",
+        "aliquam", "Aliquam", "erat", "volutpat", "Nullam", "commodo", "nulla", "ut", "enim", "iaculis", "convallis",
+        "Aenean", "id", "sagittis", "lorem", "Donec", "varius", "accumsan", "augue", "eget", "cursus", "Ut", "dui",
+        "nibh", "sodales", "quis", "porttitor", "at", "tristique", "ut", "tellus", "Donec", "vitae", "dapibus", "neque",
+        "Maecenas", "nec", "ultricies", "ante", "quis", "congue", "tellus", "Vivamus", "cursus", "nisl", "ac", "nibh",
+        "tempus", "eu", "iaculis", "nibh", "molestie", "Etiam", "tempus", "dolor", "nec", "consectetur", "tempor",
+        "orci", "purus", "malesuada", "augue", "ut", "pharetra", "leo", "metus", "sed", "urna", "In", "suscipit",
+        "placerat", "velit", "nec", "eleifend", "Maecenas", "quis", "condimentum", "mi", "nec", "blandit", "justo"});
+
+    run_exhaustive_tests();
 }
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -441,4 +590,3 @@ int main()
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-\
