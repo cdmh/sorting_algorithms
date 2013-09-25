@@ -15,13 +15,85 @@
 #include <functional>   // greater
 #include <cassert>
 #include <string>
+#include <list>
+#include <deque>
 #include <iostream>
 
 namespace cdmh {
 namespace test {
 
+// test the calling interface for each sort algorithm
+void test_interfaces(void)
+{
+    std::vector<int> v;
+    for (auto i=0; i<1000; ++i)
+        v.push_back(i);
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::bubble_sort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::bubble_sort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::cocktail_sort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::cocktail_sort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::heap_sort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::heap_sort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::insertion_sort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::insertion_sort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::introsort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::introsort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::merge_sort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::merge_sort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::vector<int> result;
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::merge_sort_copy(v.begin(), v.end(), std::back_inserter(result));
+    assert(std::is_sorted(result.begin(), result.end()));
+    result.clear();
+    cdmh::merge_sort_copy(v.begin(), v.end(), std::back_inserter(result), std::greater<int>());
+    assert(std::is_sorted(result.begin(), result.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::minmax_sort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::minmax_sort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::quicksort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::quicksort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+
+    std::random_shuffle(v.begin(), v.end());
+    cdmh::selection_sort(v.begin(), v.end());
+    assert(std::is_sorted(v.begin(), v.end()));
+    cdmh::selection_sort(v.begin(), v.end(), std::greater<int>());
+    assert(std::is_sorted(v.begin(), v.end(), std::greater<int>()));
+}
+
 template<typename Sort, typename It, typename Pred>
-void run_iterator_sort(It it, It ite, Sort sort, Pred pred)
+void sort_between_iterators(It it, It ite, Sort sort, Pred pred)
 {
     sort(it, ite, pred);
     std::cout << "--> ";
@@ -32,9 +104,9 @@ void run_iterator_sort(It it, It ite, Sort sort, Pred pred)
 }
 
 template<typename Sort, typename C, typename Pred>
-void run_container_inplace_sort(Sort sort, C container, Pred pred)
+void sort_container(Sort sort, C container, Pred pred)
 {
-    sort(container, pred);
+    sort(container.begin(), container.end(), pred);
     std::cout << "--> ";
     for (auto each : container)
         std::cout << each << " ";
@@ -43,10 +115,10 @@ void run_container_inplace_sort(Sort sort, C container, Pred pred)
 }
 
 template<typename Sort, typename C, typename Pred>
-void run_container_to_container_sort(Sort sort, C container, Pred pred)
+void sort_container_copy(Sort sort, C container, Pred pred)
 {
     C result;
-    sort(container, result, pred);
+    sort(container.begin(), container.end(), std::back_inserter(result), pred);
 
     std::cout << "--> ";
     for (auto each : result)
@@ -71,64 +143,166 @@ void test_sorts(C container, Pred pred=Pred())
     // std::sort requires random access iterators, so list & deque are not supported
     std::cout << "std::sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        run_iterator_sort(container.begin(), container.end(), std::sort<typename std::vector<typename C::value_type>::iterator, decltype(pred)>, pred);
+        sort_between_iterators(
+            container.begin(),
+            container.end(),
+            std::sort<
+                typename std::vector<typename C::value_type>::iterator,
+                decltype(pred)>,
+            pred);
     }(std::vector<typename C::value_type>(container.begin(), container.end()));
 
     // std::stable_sort requires random access iterators, so list & deque are not supported
     std::cout << "std::stable_sort " << container.size() << " elements\n";
     [&pred](std::vector<typename C::value_type> container) {
-        run_iterator_sort(container.begin(), container.end(), std::stable_sort<typename std::vector<typename C::value_type>::iterator, decltype(pred)>, pred);
+        sort_between_iterators(
+            container.begin(),
+            container.end(),
+            std::stable_sort<
+                typename std::vector<typename C::value_type>::iterator,
+                decltype(pred)>,
+            pred);
     }(std::vector<typename C::value_type>(container.begin(), container.end()));
+
+    std::cout << "Bubble Sort " << container.size() << " elements \n";
+    sort_container(
+        cdmh::bubble_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::bubble_sort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::bubble_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
+
+    std::cout << "Cocktail Sort " << container.size() << " elements \n";
+    sort_container(
+        cdmh::cocktail_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::cocktail_sort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::cocktail_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
 
     // the heap sort currently uses std::make_heap and std::sort_heap which both require
     // a random access iterator, so only vector is tested here
     std::cout << "Heap Sort " << container.size() << " elements\n";
-    run_container_inplace_sort(cdmh::heap_sort<C, Pred, true>, container, pred);
-
-    std::cout << "Merge Sort " << container.size() << " elements\n";
-    run_container_to_container_sort(cdmh::merge_sort<std::vector<typename C::value_type>, std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_to_container_sort(cdmh::merge_sort<std::list  <typename C::value_type>, std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_to_container_sort(cdmh::merge_sort<std::deque <typename C::value_type>, std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
-
-    std::cout << "Inplace Merge Sort " << container.size() << " elements\n";
-    run_container_inplace_sort(cdmh::merge_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::merge_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::merge_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+    sort_container(
+        cdmh::heap_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
 
     std::cout << "Insertion Sort " << container.size() << " elements\n";
-    run_container_inplace_sort(cdmh::insertion_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::insertion_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::insertion_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
-
-    std::cout << "Quicksort " << container.size() << " elements \n";
-    run_container_inplace_sort(cdmh::quicksort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::quicksort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::quicksort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
-
-    std::cout << "Bubble Sort " << container.size() << " elements \n";
-    run_container_inplace_sort(cdmh::bubble_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::bubble_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::bubble_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
-
-    std::cout << "Cocktail Sort " << container.size() << " elements \n";
-    run_container_inplace_sort(cdmh::cocktail_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::cocktail_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::cocktail_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+    sort_container(
+        cdmh::insertion_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::insertion_sort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::insertion_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
 
     std::cout << "Introsort " << container.size() << " elements \n";
-    run_container_inplace_sort(cdmh::introsort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::introsort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::introsort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+    sort_container(
+        cdmh::introsort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::introsort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::introsort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
 
-    std::cout << "Selection sort " << container.size() << " elements \n";
-    run_container_inplace_sort(cdmh::selection_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::selection_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::selection_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+    std::cout << "Merge Sort (copy)" << container.size() << " elements\n";
+    sort_container_copy(
+        cdmh::merge_sort_copy<
+            std::vector<typename C::value_type>::iterator,
+            std::back_insert_iterator<std::vector<typename C::value_type>>, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container_copy(
+        cdmh::merge_sort_copy<
+            std::list<typename C::value_type>::iterator,
+            std::back_insert_iterator<std::list<typename C::value_type>>, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container_copy(
+        cdmh::merge_sort_copy<
+            std::deque<typename C::value_type>::iterator,
+            std::back_insert_iterator<std::deque<typename C::value_type>>, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
+
+    std::cout << "Merge Sort (inplace)" << container.size() << " elements\n";
+    sort_container(
+        cdmh::merge_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::merge_sort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::merge_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
 
     std::cout << "MinMax sort " << container.size() << " elements \n";
-    run_container_inplace_sort(cdmh::minmax_sort<std::list  <typename C::value_type>, Pred, true>, std::list  <typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::minmax_sort<std::vector<typename C::value_type>, Pred, true>, std::vector<typename C::value_type>(container.begin(), container.end()), pred);
-    run_container_inplace_sort(cdmh::minmax_sort<std::deque <typename C::value_type>, Pred, true>, std::deque <typename C::value_type>(container.begin(), container.end()), pred);
+    sort_container(
+        cdmh::minmax_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::minmax_sort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::minmax_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
+
+    std::cout << "Quicksort " << container.size() << " elements \n";
+    sort_container(
+        cdmh::quicksort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::quicksort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::quicksort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
+
+    std::cout << "Selection sort " << container.size() << " elements \n";
+    sort_container(
+        cdmh::selection_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::selection_sort<std::list<typename C::value_type>::iterator, Pred>,
+        std::list<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    sort_container(
+        cdmh::selection_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        std::deque<typename C::value_type>(container.begin(), container.end()),
+        pred);
 }
 
 template<typename C>
@@ -149,6 +323,7 @@ int main()
     using cdmh::test::test_sorts;
     using cdmh::test::test_all_sorts;
 
+    cdmh::test::test_interfaces();
     test_all_sorts(std::vector<int>{ 1, 2, 3, 4, 51, 2, 5, 6, 1, 6, 13, 1, 2, 3, 4, 5, 6, 14, 1, 2, 3, 4, 5, 6, 1 });
     test_all_sorts(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
     test_all_sorts(std::vector<std::string>{ "the", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog" });
