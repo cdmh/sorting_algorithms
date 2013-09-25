@@ -3,6 +3,7 @@
 
 #include "sort.h"
 #include <cassert>
+#include <vector>
 #include <algorithm>        // inplace_merge
 
 namespace cdmh {
@@ -15,8 +16,8 @@ namespace cdmh {
 // http://en.wikipedia.org/wiki/Mergesort
 
 // inplace merge sort
-template<typename It, typename Pred>
-void merge_sort(It begin, It end, Pred pred)
+template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
+void merge_sort(It begin, It end, Pred pred=Pred())
 {
     auto const size = std::distance(begin, end);
     if (size <= 1)
@@ -30,17 +31,9 @@ void merge_sort(It begin, It end, Pred pred)
     std::inplace_merge(begin, middle, end, pred);
 }
 
-// inplace merge sort
-template<typename C, typename Pred=std::less<typename C::value_type>, bool isContainer=detail::is_container<C>::value>
-void merge_sort(C &container, Pred pred)
-{
-    static_assert(isContainer, "'container' must be a container");
-    merge_sort(begin(container), end(container), pred);
-}
-
 // merge sort to non-overlapping output iterator
-template<typename It, typename Out, typename Pred>
-void merge_sort(It begin, It end, Out result, Pred pred)
+template<typename It, typename Out, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
+void merge_sort_copy(It begin, It end, Out result, Pred pred=Pred())
 {
     auto const size = std::distance(begin, end);
     if (size == 0)
@@ -55,18 +48,9 @@ void merge_sort(It begin, It end, Out result, Pred pred)
     std::advance(middle, size / 2);
 
     std::vector<typename std::iterator_traits<It>::value_type> left, right;
-    merge_sort(begin, middle, std::back_inserter(left), pred);
-    merge_sort(middle, end, std::back_inserter(right), pred);
+    merge_sort_copy(begin, middle, std::back_inserter(left), pred);
+    merge_sort_copy(middle, end, std::back_inserter(right), pred);
     std::merge(left.begin(), left.end(), right.begin(), right.end(), result, pred);
-}
-
-// merge sort to secondary container
-template<typename C1, typename C2, typename Pred=std::less<typename C1::value_type>, bool isContainer=detail::is_container<C1>::value && detail::is_container<C2>::value, typename=std::enable_if<std::is_same<typename C1::value_type, typename C2::value_type>::value>>
-void merge_sort(C1 const &container, C2 &result, Pred pred)
-{
-    assert(result.empty());
-    static_assert(isContainer, "'container' and 'result' must be containers");
-    merge_sort(begin(container), end(container), std::back_inserter(result), pred);
 }
 
 }   // namespace cdmh

@@ -12,8 +12,8 @@ namespace cdmh {
 //    Worst case space complexity       О(n) total, O(1)
 // http://en.wikipedia.org/wiki/Insertion_sort
 
-template<typename It, typename Pred>
-void insertion_sort(It begin, It end, Pred pred)
+template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
+void insertion_sort(It begin, It end, Pred pred=Pred())
 {
     if (begin == end)
         return;
@@ -35,12 +35,6 @@ void insertion_sort(It begin, It end, Pred pred)
             *it2 = std::move(value);
         }
     }
-}
-
-template<typename C, typename Pred=std::less<typename C::value_type>, bool=detail::is_container<C>::value>
-void insertion_sort(C &container, Pred pred)
-{
-    insertion_sort(begin(container), end(container), pred);
 }
 
 }   // namespace cdmh
