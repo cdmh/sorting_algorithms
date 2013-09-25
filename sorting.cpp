@@ -120,15 +120,15 @@ void bubble_sort(C container, Pred pred)
 {
     std::clog << "Bubble Sort " << container.size() << " elements \n";
     sort_container(
-        cdmh::bubble_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::bubble_sort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::bubble_sort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::bubble_sort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::bubble_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::bubble_sort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -142,15 +142,15 @@ void cocktail_sort(C container, Pred pred)
 {
     std::clog << "Cocktail Sort " << container.size() << " elements \n";
     sort_container(
-        cdmh::cocktail_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::cocktail_sort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::cocktail_sort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::cocktail_sort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::cocktail_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::cocktail_sort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -166,7 +166,7 @@ void heap_sort(C container, Pred pred)
     // a random access iterator, so only vector is tested here
     std::clog << "Heap Sort " << container.size() << " elements\n";
     sort_container(
-        cdmh::heap_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::heap_sort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -180,15 +180,15 @@ void insertion_sort(C container, Pred pred)
 {
     std::clog << "Insertion Sort " << container.size() << " elements\n";
     sort_container(
-        cdmh::insertion_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::insertion_sort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::insertion_sort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::insertion_sort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::insertion_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::insertion_sort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -202,15 +202,15 @@ void introsort_sort(C container, Pred pred)
 {
     std::clog << "Introsort " << container.size() << " elements \n";
     sort_container(
-        cdmh::introsort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::introsort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::introsort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::introsort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::introsort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::introsort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -225,20 +225,20 @@ void merge_sort_copy(C container, Pred pred)
     std::clog << "Merge Sort (copy) " << container.size() << " elements\n";
     sort_container_copy(
         cdmh::merge_sort_copy<
-            std::vector<typename C::value_type>::iterator,
-            std::back_insert_iterator<std::vector<typename C::value_type>>, Pred>,
+            typename std::vector<typename C::value_type>::iterator,
+            std::back_insert_iterator<typename std::vector<typename C::value_type>>, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container_copy(
         cdmh::merge_sort_copy<
-            std::list<typename C::value_type>::iterator,
-            std::back_insert_iterator<std::list<typename C::value_type>>, Pred>,
+            typename std::list<typename C::value_type>::iterator,
+            typename std::back_insert_iterator<typename std::list<typename C::value_type>>, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container_copy(
         cdmh::merge_sort_copy<
-            std::deque<typename C::value_type>::iterator,
-            std::back_insert_iterator<std::deque<typename C::value_type>>, Pred>,
+            typename std::deque<typename C::value_type>::iterator,
+            typename std::back_insert_iterator<typename std::deque<typename C::value_type>>, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -253,15 +253,15 @@ void merge_sort(C container, Pred pred)
 {
     std::clog << "Merge Sort (inplace)" << container.size() << " elements\n";
     sort_container(
-        cdmh::merge_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::merge_sort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::merge_sort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::merge_sort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::merge_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::merge_sort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -275,15 +275,15 @@ void minmax_sort(C container, Pred pred)
 {
     std::clog  << "MinMax sort " << container.size() << " elements \n";
     sort_container(
-        cdmh::minmax_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::minmax_sort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::minmax_sort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::minmax_sort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::minmax_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::minmax_sort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -297,15 +297,15 @@ void quicksort(C container, Pred pred)
 {
     std::clog << "Quicksort " << container.size() << " elements \n";
     sort_container(
-        cdmh::quicksort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::quicksort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::quicksort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::quicksort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::quicksort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::quicksort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
 
@@ -319,15 +319,15 @@ void selection_sort(C container, Pred pred)
 {
     std::clog << "Selection sort " << container.size() << " elements \n";
     sort_container(
-        cdmh::selection_sort<std::vector<typename C::value_type>::iterator, Pred>,
+        cdmh::selection_sort<typename std::vector<typename C::value_type>::iterator, Pred>,
         std::vector<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::selection_sort<std::list<typename C::value_type>::iterator, Pred>,
+        cdmh::selection_sort<typename std::list<typename C::value_type>::iterator, Pred>,
         std::list<typename C::value_type>(container.begin(), container.end()),
         pred);
     sort_container(
-        cdmh::selection_sort<std::deque<typename C::value_type>::iterator, Pred>,
+        cdmh::selection_sort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
     // test the interface for default parameters
@@ -540,7 +540,7 @@ int main()
         });
 
     // text sorts with enough data to exceed limits in the hybrid sorts
-    test_ascending_descending(std::vector<char * const>{
+    test_ascending_descending(std::vector<char const *>{
         "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "Praesent", "a", "posuere",
         "lorem", "Nam", "porttitor", "viverra", "nisl", "ac", "adipiscing", "tortor", "ornare", "vel", "Fusce",
         "velit", "justo", "laoreet", "sed", "massa", "et", "tincidunt", "elementum", "risus", "In", "placerat",
