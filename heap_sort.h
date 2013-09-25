@@ -4,6 +4,7 @@
 #pragma once
 
 #include "sort.h"
+#include <algorithm>    // make_heap
 
 namespace cdmh {
 
