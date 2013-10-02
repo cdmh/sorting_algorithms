@@ -52,7 +52,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -98,6 +98,7 @@
     <ClInclude Include="quicksort.h" />
     <ClInclude Include="selection_sort.h" />
     <ClInclude Include="sort.h" />
+    <ClInclude Include="timsort.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sorting.cpp" />

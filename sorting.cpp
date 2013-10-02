@@ -6,6 +6,7 @@
 #include "heap_sort.h"
 #include "insertion_sort.h"
 #include "introsort.h"
+#include "timsort.h"
 #include "merge_sort.h"
 #include "minmax_sort.h"
 #include "quicksort.h"
@@ -13,31 +14,20 @@
 
 #include <algorithm>    // is_sorted
 #include <functional>   // greater
+#include <chrono>
 #include <cassert>
 #include <string>
 #include <list>
 #include <deque>
 #include <iostream>
-#include <chrono>
 
-namespace cdmh {
-namespace test {
-
-namespace utils {
-
+namespace {     // anonymous namespace
 template<typename C, typename Pred>
 C sorted(C container, Pred pred)
 {
     std::vector<typename C::value_type> vector(container.begin(), container.end());
     std::sort(vector.begin(), vector.end(), pred);
     return C(vector.begin(), vector.end());
-}
-
-template<typename It>
-void dump(It it, It ite)
-{
-    for (; it!=ite; ++it)
-        std::clog << " " << *it;
 }
 
 template<typename C>
@@ -55,8 +45,22 @@ bool const matching_containers(C const &container, C const &expected)
 
     if (!equal)
     {
-        std::clog << "\n\nExpected:"; dump(expected.begin(), expected.end());
-        std::clog << "\nActual  :";   dump(container.begin(), container.end());
+        size_t const first = std::max<size_t>(0, loop-5);
+        size_t const last  = std::min<size_t>(container.size(), loop+4);
+
+        std::clog << "\n\nExpected: ";
+        if (first > 0)
+            std::clog << " ...";
+        dump(cdmh::detail::advance(expected.begin(), first), cdmh::detail::advance(expected.begin(), last));
+        if (last < container.size())
+            std::clog << " ...";
+
+        std::clog << "\nActual  : ";
+        if (first > 0)
+            std::clog << " ...";
+        dump(cdmh::detail::advance(container.begin(), first), cdmh::detail::advance(container.begin(), last));
+        if (last < container.size())
+            std::clog << " ...";
     }
     if (!equal)
         std::clog << "\nERROR at offset " << loop-1;
@@ -64,12 +68,28 @@ bool const matching_containers(C const &container, C const &expected)
         std::clog << "\nERROR: containers are different sizes!";
     if (container != expected)
         std::clog << "\n";
+    assert(container == expected);
     return (container == expected);
+}
+
+}   //  anonymous namespace
+
+namespace cdmh {
+namespace test {
+
+namespace utils {
+
+template<typename It>
+void dump(It it, It ite)
+{
+    for (; it!=ite; ++it)
+        std::clog << " " << *it;
 }
 
 }   // namespace utils
 
 namespace wrappers {
+
 
 template<typename Sort, typename It, typename Pred>
 void sort_between_iterators(It it, It ite, Sort sort, Pred pred)
@@ -77,35 +97,49 @@ void sort_between_iterators(It it, It ite, Sort sort, Pred pred)
     sort(it, ite, pred);
     std::clog << "--> ";
     utils::dump(it, ite);
-    std::clog << '\n';
-    assert(std::is_sorted(it, ite, pred));
+
+    if (!std::is_sorted(it, ite, pred))
+    {
+        std::clog << "\nERROR: the results are not sorted";
+        assert(!"the results are not sorted");
+    }
 }
 
 template<typename Sort, typename C, typename Pred>
 void sort_container(Sort sort, C container, Pred pred)
 {
-    C expected(utils::sorted(container, pred));
-    sort(container.begin(), container.end(), pred);
+    C expected(sorted(container, pred));
 
-    std::clog << "--> ";
-    utils::dump(container.begin(), container.end());
+    typedef std::chrono::high_resolution_clock Clock;
+    typedef std::chrono::milliseconds milliseconds;
+    Clock::time_point t0 = Clock::now();
+    sort(container.begin(), container.end(), pred);
+    Clock::time_point t1 = Clock::now();
+    milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
+    std::clog << ms.count() << "ms ";
+
+    if (container.size() < 100)
+    {
+        std::clog << "--> ";
+        utils::dump(container.begin(), container.end());
+    }
     std::clog << '\n';
 
-    assert(utils::matching_containers(container, expected));
+    matching_containers(container, expected);
 }
 
 template<typename Sort, typename C, typename Pred>
 void sort_container_copy(Sort sort, C container, Pred pred)
 {
     C result;
-    C expected(utils::sorted(container, pred));
+    C expected(sorted(container, pred));
     sort(container.begin(), container.end(), std::back_inserter(result), pred);
 
     std::clog << "--> ";
     utils::dump(result.begin(), result.end());
     std::clog << '\n';
 
-    assert(utils::matching_containers(result, expected));
+    matching_containers(result, expected);
 }
 
 }   // namespace wrappers
@@ -131,7 +165,6 @@ void bubble_sort(C container, Pred pred)
         cdmh::bubble_sort<typename std::deque<typename C::value_type>::iterator, Pred>,
         std::deque<typename C::value_type>(container.begin(), container.end()),
         pred);
-
     // test the interface for default parameters
     std::random_shuffle(container.begin(), container.end());
     cdmh::bubble_sort(container.begin(), container.end());
@@ -335,6 +368,27 @@ void selection_sort(C container, Pred pred)
     cdmh::selection_sort(container.begin(), container.end());
 }
 
+template<typename C, typename Pred>
+void timsort(C container, Pred pred)
+{
+    std::clog << "Timsort sort " << container.size() << " elements \n";
+    sort_container(
+        cdmh::timsort<typename std::vector<typename C::value_type>::iterator, Pred>,
+        std::vector<typename C::value_type>(container.begin(), container.end()),
+        pred);
+    //sort_container(
+    //    cdmh::timsort<typename std::list<typename C::value_type>::iterator, Pred>,
+    //    std::list<typename C::value_type>(container.begin(), container.end()),
+    //    pred);
+    //sort_container(
+    //    cdmh::timsort<typename std::deque<typename C::value_type>::iterator, Pred>,
+    //    std::deque<typename C::value_type>(container.begin(), container.end()),
+    //    pred);
+    // test the interface for default parameters
+    std::random_shuffle(container.begin(), container.end());
+    cdmh::timsort(container.begin(), container.end());
+}
+
 }   // namespace algorithms
 
 namespace drivers {
@@ -451,6 +505,7 @@ void test_sorts(C container, Pred pred)
     algorithms::minmax_sort(container, pred);
     algorithms::quicksort(container, pred);
     algorithms::selection_sort(container, pred);
+    algorithms::timsort(container, pred);
 }
 
 }   // namespace detail
@@ -517,8 +572,42 @@ void run_exhaustive_tests(void)
 }   // namespace test
 }   // namespace cdmh
 
+
+void test_timsort(void)
+{
+#ifdef NDEBUG
+    int const count = 47483600;
+#else
+    int const count = 83600;
+#endif
+    std::vector<int> container;
+    for (int loop=0; loop<count; ++loop)
+        container.push_back(loop);
+
+    std::clog << "Sorting " << count << " sorted integers ... ";
+    cdmh::test::wrappers::sort_container(
+        cdmh::timsort<std::vector<std::vector<int>::value_type>::iterator, std::less<int>>,
+        std::vector<std::vector<int>::value_type>(container.begin(), container.end()),
+        std::less<int>());
+
+    std::clog << "Sorting " << count << " reverse-sorted integers ... ";
+    cdmh::test::wrappers::sort_container(
+        cdmh::timsort<std::vector<std::vector<int>::value_type>::iterator, std::greater<int>>,
+        std::vector<std::vector<int>::value_type>(container.begin(), container.end()),
+        std::greater<int>());
+
+    std::clog << "Sorting " << count << " shuffled integers ... ";
+    std::random_shuffle(container.begin(), container.end());
+    cdmh::test::wrappers::sort_container(
+        cdmh::timsort<std::vector<std::vector<int>::value_type>::iterator, std::less<int>>,
+        std::vector<std::vector<int>::value_type>(container.begin(), container.end()),
+        std::less<int>());
+}
+
 int main()
 {
+    test_timsort();
+#ifdef NDEBUG
     using cdmh::test::drivers::run_exhaustive_tests;
     using cdmh::test::drivers::test_stable_sorts;
     using cdmh::test::drivers::test_ascending_descending;
@@ -536,7 +625,7 @@ int main()
     test_stable_sorts(
         std::vector<double>{ 1.2, 1.1, 0.4, 0.1, 0.9, 3.1, 3.6, 9.4, 9.8, 9.6, 3.2 },
         [](double const &first, double const &second) {
-            return int(first)<int(second);
+            return int(first) < int(second);
         });
 
     // text sorts with enough data to exceed limits in the hybrid sorts
@@ -571,6 +660,7 @@ int main()
         "placerat", "velit", "nec", "eleifend", "Maecenas", "quis", "condimentum", "mi", "nec", "blandit", "justo"});
 
     run_exhaustive_tests();
+#endif
 }
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy

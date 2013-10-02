@@ -35,3 +35,10 @@ inline It advance(It it, Distance n)
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+template<typename It>
+void dump(It it, It ite)
+{
+    while (it != ite)
+        std::clog << *it++ << " ";
+}

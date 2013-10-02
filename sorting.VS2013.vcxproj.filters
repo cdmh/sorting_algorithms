@@ -39,6 +39,9 @@
     <ClInclude Include="cocktail_sort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="timsort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="minmax_sort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
