@@ -90,6 +90,6 @@ An inplace comparison sorting algorithm that is slow for large data sets, but it
 |http://en.wikipedia.org/wiki/Selection_sort|stable|
 |----|---
 |Worst case performance              |O(n^2)
-|Best case performance               |O(n)
+|Best case performance               |O(n^2)
 |Average case performance            |O(n^2)
 |Space                               |O(1)
