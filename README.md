@@ -93,3 +93,16 @@ An inplace comparison sorting algorithm that is slow for large data sets, but it
 |Best case performance               |O(n^2)
 |Average case performance            |O(n^2)
 |Space                               |O(1)
+
+###Counting Sort
+In this sort, we count the frequencies of distinct elements of array and store them in an auxiliary array, by mapping its value as index of auxiliary array and then place each element in its proper position in the output array .
+( *Here max is the maximum value present in the list of elements )
+
+https://en.wikipedia.org/wiki/Counting_sort|stable|
+|----|---
+|Worst case performance              |O(n+max)
+|Best case performance               |O(n+max)
+|Average case performance            |O(n+max)
+|Space                               |O(max) auxillary
+
+
