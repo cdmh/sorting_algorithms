@@ -36,6 +36,36 @@ inline void bubble_sort(It begin, It end, Pred pred=Pred())
     }
 }
 
+template<typename T>
+bool operator < (T left, T right)
+{
+    return left.key < right.key;
+};
+
+template<typename It, typename Pred=std::less<typename std::iterator_traits<It>::value_type>>
+inline void bubble_sort_kentian(It begin, It end, Pred pred=Pred())
+{
+    if (std::distance(begin, end) <= 1)
+        return;
+    
+    auto ite      = end;
+    bool finished = false;
+    while (!finished)
+    {
+        finished = true;
+        std::advance(ite, -1);
+        for (auto it=begin; it!=ite; ++it)
+        {
+            auto next = detail::advance(it, 1);
+            if (pred(*next, *it))
+            {
+                std::swap(*it, *next);
+                finished = false;
+            }
+        }
+    }
+}
+
 }   // namespace cdmh
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
