@@ -75,7 +75,7 @@ An adapted Selection Sort that finds and repositions the Min and Max elements on
 |Space                               |O(1)
 
 ###Quick Sort
-A recursive sorting algorithm that works well with a cache, but is unstable; that is elements with identical keys may appear in a different order in the result than they do in the original data set.
+A recursive sorting algorithm that works well with a cache, but is unstable; that is elements with identical keys may appear in a different order in the result than they do in the original dataset.
 
 |http://en.wikipedia.org/wiki/Quicksort|unstable|
 |----|---
