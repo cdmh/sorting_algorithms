@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define F(i,n) for(int i=0;i<n;i++)
+stack<int> s;
+void dfs(ll src, ll vis[], const vector<int> v[]){
+	vis[src]=1;
+	F(i,v[src].size()){
+		if(!vis[v[src][i]])dfs(v[src][i],vis,v);
+	}
+		s.push(src);
+	
+}
+int main(){
+	ll n,e;
+	cin>>n>>e;
+	vector<int> v[n+1];
+	F(i,e){
+		int x,y;
+		cin>>x>>y;
+		v[x].push_back(y);
+	}
+	ll vis[n+1]={0};
+	for(int i=0;i<n;i++){
+		if(!vis[i])
+			dfs(i,vis,v);
+	}
+	while(!s.empty()){
+		cout<<s.top()<<" ";
+		s.pop();
+	}
+}
