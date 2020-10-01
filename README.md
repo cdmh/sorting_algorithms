@@ -1,6 +1,7 @@
 #C++ Sorting Algorithm implementation
 
 A collection of Sorting Algorithm implemented in C++11. See the `develop` branch for latest version.
+Sorting in O(n) is not possible.Therfore fastest solving time complexity is O(nlogn).
 
 ## Testing
 Tested on g++ 4.8.1 on Ubuntu 13.04 Server and Microsoft Visual Studio 2013RC
